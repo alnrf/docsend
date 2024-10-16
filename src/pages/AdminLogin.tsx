@@ -46,6 +46,9 @@ export const AdminLogin = () => {
         {error && <p style={{ color: "red" }}>{error}</p>}
         <button type="submit">Entrar</button>
       </form>
+      <button className="back_button" onClick={() => navigate("/")}>
+        Voltar
+      </button>
     </div>
   );
 };

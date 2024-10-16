@@ -4,12 +4,14 @@ import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
 import { ref, listAll, getDownloadURL } from "firebase/storage";
 import { useForm } from "react-hook-form";
 import { db, storage } from "../configs/firebase";
+import { useNavigate } from "react-router";
 
 export const MainDashboard = () => {
   const [files, setFiles] = useState([]);
   const { register, handleSubmit, reset } = useForm();
   const usersCollection = collection(db, "users");
   const storageRef = ref(storage, "files/"); // Assuming all files are under 'files/'
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -42,6 +44,9 @@ export const MainDashboard = () => {
 
   return (
     <div className="container">
+      <button className="back_button" onClick={() => navigate("/")}>
+        Voltar
+      </button>
       <h2>Admin Dashboard</h2>
 
       <section>
@@ -62,21 +67,33 @@ export const MainDashboard = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
             <label>Nome:</label>
-            <input {...register("name", { required: true })} />
+            <input
+              {...register("name", { required: true })}
+              placeholder="Informe um nome"
+            />
           </div>
           <div>
             <label>Email:</label>
-            <input type="email" {...register("email", { required: true })} />
+            <input
+              type="email"
+              {...register("email", { required: true })}
+              placeholder="Informe um email"
+            />
           </div>
           <div>
             <label>CPF:</label>
-            <input {...register("cpf", { required: true })} />
+            <input
+              {...register("cpf", { required: true })}
+              placeholder="Somente números"
+            />
           </div>
           <div>
             <label>Tipo:</label>
             <select {...register("type", { required: true })}>
+              <option value="">Selecione</option>
               <option value="buyer">Comprador</option>
-              <option value="seller">Vendedor</option>
+              <option value="seller_pf">Vendedor PF</option>
+              <option value="seller_pj">Vendedor PJ</option>
               {/* Add other types if necessary */}
             </select>
           </div>

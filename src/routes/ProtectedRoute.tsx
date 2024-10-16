@@ -7,7 +7,7 @@ import { auth } from "../configs/firebase";
 const ProtectedRoute = ({ children }: any) => {
   const [user, loading] = useAuthState(auth);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>Carregando...</div>;
 
   if (!user) {
     return <Navigate to="/login/admin" />;

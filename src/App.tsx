@@ -10,25 +10,22 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
-    <>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login/admin" element={<AdminLogin />} />
-        <Route path="/login/user" element={<UserLogin />} />
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login/admin" element={<AdminLogin />} />
+      <Route path="/login/user/:path" element={<UserLogin />} />
+      <Route path="/upload" element={<FileUpload />} />
+      <Route
+        path="/admin/home"
+        element={
+          <ProtectedRoute>
+            <MainDashboard />
+          </ProtectedRoute>
+        }
+      />
 
-        <Route path="/upload/:path" element={<FileUpload />} />
-        <Route
-          path="/admin/home"
-          element={
-            <ProtectedRoute>
-              <MainDashboard />
-            </ProtectedRoute>
-          }
-        />
-        {/* Redirect unknown routes to home */}
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    </>
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
   );
 }
 

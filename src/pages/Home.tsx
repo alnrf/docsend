@@ -4,37 +4,26 @@ import { useNavigate } from "react-router-dom";
 export const Home = () => {
   const navigate = useNavigate();
 
-  const handleBuyer = () => {
-    navigate("/login/user");
+  const handleLogin = (type: string) => {
+    navigate(`/login/user/${type}`);
   };
 
-  const handleSeller = () => {
-    // Assuming sellers have similar functionalities as buyers
-    // You can differentiate sellers in the user database
-    navigate("/login/user"); // Or a separate seller login
+  const handleAgentLogin = () => {
+    navigate("/login/admin");
   };
   return (
     <div className="container">
       <h1>Bem-vindo</h1>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          marginTop: "20px",
-        }}
-      >
-        <button
-          onClick={handleBuyer}
-          style={{ flex: "1", marginRight: "10px" }}
-        >
-          Sou Comprador
+      <h3>Escolha abaixo qual seu perfil</h3>
+      <div className="homeButtonContainer">
+        <button onClick={() => handleLogin("buyer")}>Sou Comprador</button>
+        <button onClick={() => handleLogin("seller_pf")}>
+          Sou Vendedor - PF
         </button>
-        <button
-          onClick={handleSeller}
-          style={{ flex: "1", marginLeft: "10px" }}
-        >
-          Sou Vendedor
+        <button onClick={() => handleLogin("seller_pj")}>
+          Sou Vendedor - PJ
         </button>
+        <button onClick={handleAgentLogin}>Sou Correspondente</button>
       </div>
     </div>
   );

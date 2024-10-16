@@ -11,9 +11,12 @@ body {
   padding: 20px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   text-align: center;
 }
 
@@ -30,9 +33,12 @@ form > div {
 
 label {
   margin-bottom: 5px;
+  font-weight: 600;
 }
 
-input, select, button {
+input,
+select,
+button {
   padding: 10px;
   font-size: 16px;
 }
@@ -43,19 +49,62 @@ button {
   color: #fff;
   border: none;
   border-radius: 5px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+.back_button {
+  cursor: pointer;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  width: fit-content;
+  padding: 8px;
+  position: absolute;
+  right: 20px;
+  top: 20px;
 }
 
-button:hover {
+button:hover,
+.back_button:hover {
   background-color: #0056b3;
 }
 
-/* Responsive Design */
+.containerRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between; margin: 16px 0;
+width: 100%;
+}
+
+.inputcontainer {
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid black;
+  align-items: flex-start;
+ 
+}
+
+.homeButtonContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: "20px";
+}
+
 @media (max-width: 600px) {
   .container {
     padding: 10px;
   }
 
-  input, select, button {
+  input,
+  select {
     font-size: 14px;
+  }
+  .containerRow {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

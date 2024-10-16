@@ -20,8 +20,7 @@ export const UserLogin = () => {
       );
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
-        // User exists, navigate to upload page
-        navigate("/upload/comprador", {
+        navigate("/upload", {
           state: { user: querySnapshot.docs[0].data() },
         });
       } else {
@@ -43,6 +42,7 @@ export const UserLogin = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            placeholder="informe o email"
           />
         </div>
         <div>
@@ -52,11 +52,15 @@ export const UserLogin = () => {
             value={cpf}
             onChange={(e) => setCpf(e.target.value)}
             required
+            placeholder="Somente números"
           />
         </div>
         {error && <p style={{ color: "red" }}>{error}</p>}
         <button type="submit">Entrar</button>
       </form>
+      <button className="back_button" onClick={() => navigate("/")}>
+        Voltar
+      </button>
     </div>
   );
 };
