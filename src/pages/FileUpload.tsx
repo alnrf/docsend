@@ -32,7 +32,6 @@ export const FileUpload = () => {
     formState: { errors },
   } = useForm();
   const [cpfFile, setCpfFile] = useState<any>(null);
-
   const [cnpjFile, setCnpjFile] = useState<any>(null);
   const [rgCnhFile, setRGCnhFile] = useState<any>(null);
   const [enderecoFile, setEnderecoFile] = useState<any>(null);
@@ -168,26 +167,24 @@ export const FileUpload = () => {
         `files/${user?.cpf}/fgts_${timestamp}_${fgtsFile?.name}`
       );
 
-      // Upload CPF file
       const cpfSnapshot = await uploadBytes(cpfRef, cpfFile);
       const cpfURL = await getDownloadURL(cpfSnapshot.ref);
 
-      // Upload Endereço file
       const cnpjSnapshot = await uploadBytes(cnpjRef, cnpjFile);
       const cnpjURL = await getDownloadURL(cnpjSnapshot.ref);
-      // Upload Endereço file
+
       const rgCnhSnapshot = await uploadBytes(rgCnhRef, rgCnhFile);
       const rgCnhURL = await getDownloadURL(rgCnhSnapshot.ref);
-      // Upload Endereço file
+
       const enderecoSnapshot = await uploadBytes(enderecoRef, enderecoFile);
       const enderecoURL = await getDownloadURL(enderecoSnapshot.ref);
-      // Upload Endereço file
+
       const certCasamentoSnapshot = await uploadBytes(
         certCasamentoRef,
         mariageFile
       );
       const certCasamentoURL = await getDownloadURL(certCasamentoSnapshot.ref);
-      // Upload Endereço file
+
       const contratoSocialSnapshot = await uploadBytes(
         contratoSocialRef,
         socialContractFile
@@ -195,10 +192,10 @@ export const FileUpload = () => {
       const contratoSocialURL = await getDownloadURL(
         contratoSocialSnapshot.ref
       );
-      // Upload Endereço file
+
       const compRendaSnapshot = await uploadBytes(compRendaRef, profitFile);
       const compRendaURL = await getDownloadURL(compRendaSnapshot.ref);
-      // Upload Endereço file
+
       const ctpsSnapshot = await uploadBytes(ctpsRef, ctpsFile);
       const ctpsURL = await getDownloadURL(ctpsSnapshot.ref);
 
@@ -224,8 +221,8 @@ export const FileUpload = () => {
       };
 
       console.log(uploadData);
-      // const uploadsCollection = collection(db, "uploads");
-      // await addDoc(uploadsCollection, uploadData);
+      const uploadsCollection = collection(db, "uploads");
+      await addDoc(uploadsCollection, uploadData);
 
       setMessage("Arquivo carregado com sucesso!");
       reset();
