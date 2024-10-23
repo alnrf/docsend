@@ -32,6 +32,7 @@ export const FileUpload = () => {
     formState: { errors },
   } = useForm();
   const [cpfFile, setCpfFile] = useState<any>(null);
+
   const [cnpjFile, setCnpjFile] = useState<any>(null);
   const [rgCnhFile, setRGCnhFile] = useState<any>(null);
   const [enderecoFile, setEnderecoFile] = useState<any>(null);
@@ -46,16 +47,16 @@ export const FileUpload = () => {
   const navigate = useNavigate();
 
   const emptyFiles =
-    !cpfFile ||
-    !cnpjFile ||
-    !rgCnhFile ||
-    !enderecoFile ||
-    !mariageFile ||
-    !socialContractFile ||
-    !profitFile ||
-    !ctpsFile ||
-    !irpfFile ||
-    !fgtsFile;
+    !!cpfFile ||
+    !!cnpjFile ||
+    !!rgCnhFile ||
+    !!enderecoFile ||
+    !!mariageFile ||
+    !!socialContractFile ||
+    !!profitFile ||
+    !!ctpsFile ||
+    !!irpfFile ||
+    !!fgtsFile;
 
   const allowedTypes = [
     "image/jpeg",
@@ -72,8 +73,7 @@ export const FileUpload = () => {
     return allowedTypes.includes(file.type);
   };
 
-  const handleFileChange = (e: any, docType: string) => {
-    const file = e;
+  const handleFileChange = (file: File, docType: string) => {
     if (file && validateFileType(file)) {
       switch (docType) {
         case "cpfDoc":
@@ -113,15 +113,14 @@ export const FileUpload = () => {
       alert(
         "Formato de arquivo inválido. Somente JPG, JPEG, PNG ou PDF são permitidos."
       );
-      e.target.value = null; // Reset the input
     }
   };
 
   const onSubmit = async () => {
-    if (emptyFiles) {
-      setMessage("Adicione todos os documentos solicitados.");
-      return;
-    }
+    // if (emptyFiles) {
+    //   setMessage("Adicione todos os documentos solicitados.");
+    //   return;
+    // }
 
     setUploading(true);
     setMessage("");
@@ -130,43 +129,43 @@ export const FileUpload = () => {
       const timestamp = Date.now();
       const cpfRef = ref(
         storage,
-        `files/${user.cpf}/cpf_${timestamp}_${cpfFile.name}`
+        `files/${user?.cpf}/cpf_${timestamp}_${cpfFile?.name}`
       );
       const cnpjRef = ref(
         storage,
-        `files/${user.cpf}/cnpj_${timestamp}_${cnpjFile.name}`
+        `files/${user?.cpf}/cnpj_${timestamp}_${cnpjFile?.name}`
       );
       const rgCnhRef = ref(
         storage,
-        `files/${user.cpf}/rg_cnh_${timestamp}_${rgCnhFile.name}`
+        `files/${user?.cpf}/rg_cnh_${timestamp}_${rgCnhFile?.name}`
       );
       const enderecoRef = ref(
         storage,
-        `files/${user.cpf}/endereco_${timestamp}_${enderecoFile.name}`
+        `files/${user?.cpf}/endereco_${timestamp}_${enderecoFile?.name}`
       );
       const certCasamentoRef = ref(
         storage,
-        `files/${user.cpf}/cert_casamento_${timestamp}_${mariageFile.name}`
+        `files/${user?.cpf}/cert_casamento_${timestamp}_${mariageFile?.name}`
       );
       const contratoSocialRef = ref(
         storage,
-        `files/${user.cpf}/contrato_social_${timestamp}_${socialContractFile.name}`
+        `files/${user?.cpf}/contrato_social_${timestamp}_${socialContractFile?.name}`
       );
       const compRendaRef = ref(
         storage,
-        `files/${user.cpf}/comp_renda_${timestamp}_${profitFile.name}`
+        `files/${user?.cpf}/comp_renda_${timestamp}_${profitFile?.name}`
       );
       const ctpsRef = ref(
         storage,
-        `files/${user.cpf}/ctps_${timestamp}_${ctpsFile.name}`
+        `files/${user?.cpf}/ctps_${timestamp}_${ctpsFile?.name}`
       );
       const irpfRef = ref(
         storage,
-        `files/${user.cpf}/irpf_${timestamp}_${irpfFile.name}`
+        `files/${user?.cpf}/irpf_${timestamp}_${irpfFile?.name}`
       );
       const fgtsRef = ref(
         storage,
-        `files/${user.cpf}/fgts_${timestamp}_${fgtsFile.name}`
+        `files/${user?.cpf}/fgts_${timestamp}_${fgtsFile?.name}`
       );
 
       // Upload CPF file
@@ -224,8 +223,9 @@ export const FileUpload = () => {
         uploadedAt: new Date(),
       };
 
-      const uploadsCollection = collection(db, "uploads");
-      await addDoc(uploadsCollection, uploadData);
+      console.log(uploadData);
+      // const uploadsCollection = collection(db, "uploads");
+      // await addDoc(uploadsCollection, uploadData);
 
       setMessage("Arquivo carregado com sucesso!");
       reset();
@@ -282,9 +282,10 @@ export const FileUpload = () => {
             <div className="containerRow">
               <input
                 type="file"
-                onChange={(e: any) =>
-                  handleFileChange(e.target.files[0], item?.docType)
-                }
+                onChange={(e: any) => {
+                  console.log(e.target.files[0]);
+                  handleFileChange(e.target.files[0], item?.docType);
+                }}
                 required
                 accept={allowedTypes.toString()}
               />
