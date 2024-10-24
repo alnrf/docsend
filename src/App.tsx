@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "./App.css";
 import { Navigate, Route, Routes } from "react-router";
 import { FileUpload } from "./pages/FileUpload";

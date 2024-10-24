@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { db } from "../configs/firebase";
 
 export const UserLogin = () => {
   const [email, setEmail] = useState("");
-  const [cpf, setCpf] = useState("");
+  const [cpfCnpj, setCpfCnpj] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { path } = useParams();
 
   const handleUserLogin = async (e: any) => {
     e.preventDefault();
@@ -16,7 +16,7 @@ export const UserLogin = () => {
       const q = query(
         collection(db, "users"),
         where("email", "==", email),
-        where("cpf", "==", cpf)
+        where("cpfCnpj", "==", cpfCnpj)
       );
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
@@ -46,11 +46,11 @@ export const UserLogin = () => {
           />
         </div>
         <div>
-          <label>CPF:</label>
+          <label>{path === "seller_pj" ? "CNPJ:" : "CPF:"}</label>
           <input
             type="text"
-            value={cpf}
-            onChange={(e) => setCpf(e.target.value)}
+            value={cpfCnpj}
+            onChange={(e) => setCpfCnpj(e.target.value)}
             required
             placeholder="Somente números"
           />
