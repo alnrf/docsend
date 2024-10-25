@@ -23,7 +23,7 @@ export const AdminLogin = () => {
 
   return (
     <div className="container">
-      <h2>Admin Login</h2>
+      <h1>Admin Login</h1>
       <form onSubmit={handleLogin}>
         <div>
           <label>Email:</label>

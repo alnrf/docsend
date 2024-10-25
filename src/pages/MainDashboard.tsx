@@ -1,30 +1,74 @@
 import React, { useEffect, useState } from "react";
 
 import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
-import { ref, listAll, getDownloadURL } from "firebase/storage";
+
 import { useForm } from "react-hook-form";
 import { db, storage } from "../configs/firebase";
 import { useNavigate } from "react-router";
+type FileUrls = {
+  contratoSocialDocumentURL?: string;
+  cpfDocumentURL?: string;
+  rgCnhDocumentURL?: string;
+  uploadedAt?: string;
+};
+
+type DocumentEntry = {
+  cpfCnpj: string;
+  files: FileUrls;
+};
+
+type DocumentGroup = {
+  type: string;
+  cpfCnpj: string;
+  documents: FileUrls[];
+};
 
 export const MainDashboard = () => {
-  const [files, setFiles] = useState([]);
   const { register, handleSubmit, reset } = useForm();
   const usersCollection = collection(db, "users");
-  const storageRef = ref(storage, "files/"); // Assuming all files are under 'files/'
+  const uploadsCollection = collection(db, "uploads");
   const navigate = useNavigate();
+  const [files, setFiles] = useState<DocumentGroup[]>([]);
 
   useEffect(() => {
     const fetchFiles = async () => {
       try {
-        const list = await listAll(storageRef);
-        const filePromises = list.items.map(async (itemRef) => {
-          const url = await getDownloadURL(itemRef);
-          return { name: itemRef.name, url };
+        const querySnapshot = await getDocs(uploadsCollection);
+        const groupedFiles: DocumentGroup[] = [];
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const { cpfCnpj, type, uploadedAt, ...fileUrls } = data;
+
+          // Convert timestamp to readable format if available
+          if (uploadedAt && uploadedAt.seconds) {
+            fileUrls.uploadedAt = new Date(
+              uploadedAt.seconds * 1000
+            ).toLocaleString();
+          }
+
+          // Check if a group with the same type and cpfCnpj exists
+          let documentGroup = groupedFiles.find(
+            (group) => group.type === type && group.cpfCnpj === cpfCnpj
+          );
+
+          // If the group doesn't exist, create it
+          if (!documentGroup) {
+            documentGroup = {
+              type,
+              cpfCnpj,
+              documents: [],
+            };
+            groupedFiles.push(documentGroup);
+          }
+
+          // Add document URLs to the documents array in the group
+          documentGroup.documents.push(fileUrls as FileUrls);
         });
-        const files: any = await Promise.all(filePromises);
-        setFiles(files);
+
+        setFiles(groupedFiles);
       } catch (err) {
-        console.error("Erro ao recuperar arquivos:", err);
+        console.error("Error fetching files:", err);
       }
     };
 
@@ -51,15 +95,35 @@ export const MainDashboard = () => {
 
       <section>
         <h3>Arquivos</h3>
-        <ul>
-          {files.map((file: any) => (
-            <li key={file?.url}>
-              <a href={file?.url} target="_blank" rel="noopener noreferrer">
-                {file?.name}
-              </a>
-            </li>
+        <div className="filesContainer">
+          {files.map((fileGroup, index) => (
+            <div className="docContainer" key={`${fileGroup.type}-${index}`}>
+              <div className="documentNumberRow">
+                <strong>CPF/CNPJ:</strong> {fileGroup.cpfCnpj}
+              </div>
+              <div className="documentNumberRow">
+                <strong>Perfil:</strong> {fileGroup.type}
+              </div>
+              <div>
+                {fileGroup.documents.map((document, docIndex) => (
+                  <div key={docIndex}>
+                    {Object.entries(document).map(([key, url]) => (
+                      <div key={key}>
+                        <a
+                          href={url as string}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {key}
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       </section>
 
       <section>
@@ -83,7 +147,7 @@ export const MainDashboard = () => {
           <div>
             <label>CPF:</label>
             <input
-              {...register("cpf", { required: true })}
+              {...register("cpfCnpj", { required: true })}
               placeholder="Somente números"
             />
           </div>
@@ -94,7 +158,6 @@ export const MainDashboard = () => {
               <option value="buyer">Comprador</option>
               <option value="seller_pf">Vendedor PF</option>
               <option value="seller_pj">Vendedor PJ</option>
-              {/* Add other types if necessary */}
             </select>
           </div>
           <button type="submit">Adicionar Usuário</button>

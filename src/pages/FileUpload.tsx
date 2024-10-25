@@ -65,7 +65,7 @@ export const FileUpload = () => {
   ];
 
   const formattedString = allowedTypes
-    .map((type) => type.split("/")[1].toUpperCase()) // Get the part after '/' and convert it to uppercase
+    .map((type) => type.split("/")[1].toUpperCase())
     .join(", ");
 
   const validateFileType = (file: any) => {
@@ -116,115 +116,131 @@ export const FileUpload = () => {
   };
 
   const onSubmit = async () => {
-    // if (emptyFiles) {
-    //   setMessage("Adicione todos os documentos solicitados.");
-    //   return;
-    // }
-
     setUploading(true);
     setMessage("");
 
     try {
       const timestamp = Date.now();
-      const cpfRef = ref(
-        storage,
-        `files/${user?.cpf}/cpf_${timestamp}_${cpfFile?.name}`
-      );
-      const cnpjRef = ref(
-        storage,
-        `files/${user?.cpf}/cnpj_${timestamp}_${cnpjFile?.name}`
-      );
-      const rgCnhRef = ref(
-        storage,
-        `files/${user?.cpf}/rg_cnh_${timestamp}_${rgCnhFile?.name}`
-      );
-      const enderecoRef = ref(
-        storage,
-        `files/${user?.cpf}/endereco_${timestamp}_${enderecoFile?.name}`
-      );
-      const certCasamentoRef = ref(
-        storage,
-        `files/${user?.cpf}/cert_casamento_${timestamp}_${mariageFile?.name}`
-      );
-      const contratoSocialRef = ref(
-        storage,
-        `files/${user?.cpf}/contrato_social_${timestamp}_${socialContractFile?.name}`
-      );
-      const compRendaRef = ref(
-        storage,
-        `files/${user?.cpf}/comp_renda_${timestamp}_${profitFile?.name}`
-      );
-      const ctpsRef = ref(
-        storage,
-        `files/${user?.cpf}/ctps_${timestamp}_${ctpsFile?.name}`
-      );
-      const irpfRef = ref(
-        storage,
-        `files/${user?.cpf}/irpf_${timestamp}_${irpfFile?.name}`
-      );
-      const fgtsRef = ref(
-        storage,
-        `files/${user?.cpf}/fgts_${timestamp}_${fgtsFile?.name}`
-      );
-
-      const cpfSnapshot = await uploadBytes(cpfRef, cpfFile);
-      const cpfURL = await getDownloadURL(cpfSnapshot.ref);
-
-      const cnpjSnapshot = await uploadBytes(cnpjRef, cnpjFile);
-      const cnpjURL = await getDownloadURL(cnpjSnapshot.ref);
-
-      const rgCnhSnapshot = await uploadBytes(rgCnhRef, rgCnhFile);
-      const rgCnhURL = await getDownloadURL(rgCnhSnapshot.ref);
-
-      const enderecoSnapshot = await uploadBytes(enderecoRef, enderecoFile);
-      const enderecoURL = await getDownloadURL(enderecoSnapshot.ref);
-
-      const certCasamentoSnapshot = await uploadBytes(
-        certCasamentoRef,
-        mariageFile
-      );
-      const certCasamentoURL = await getDownloadURL(certCasamentoSnapshot.ref);
-
-      const contratoSocialSnapshot = await uploadBytes(
-        contratoSocialRef,
-        socialContractFile
-      );
-      const contratoSocialURL = await getDownloadURL(
-        contratoSocialSnapshot.ref
-      );
-
-      const compRendaSnapshot = await uploadBytes(compRendaRef, profitFile);
-      const compRendaURL = await getDownloadURL(compRendaSnapshot.ref);
-
-      const ctpsSnapshot = await uploadBytes(ctpsRef, ctpsFile);
-      const ctpsURL = await getDownloadURL(ctpsSnapshot.ref);
-
-      const irpfSnapshot = await uploadBytes(irpfRef, irpfFile);
-      const irpfURL = await getDownloadURL(irpfSnapshot.ref);
-
-      const fgtsSnapshot = await uploadBytes(fgtsRef, fgtsFile);
-      const fgtsURL = await getDownloadURL(fgtsSnapshot.ref);
-
-      const uploadData = {
-        cpf: user.cpf,
-        cpfDocumentURL: cpfURL,
-        enderecoDocumentURL: enderecoURL,
-        cnpjDocumentURL: cnpjURL || "",
-        rhCnhDocumentURL: rgCnhURL || "",
-        certCasamentoDocumentURL: certCasamentoURL || "",
-        contratoSocialDocumentURL: contratoSocialURL || "",
-        compRendaDocumentURL: compRendaURL || "",
-        cartTrabalhoDocumentURL: ctpsURL || "",
-        irpfDocumentURL: irpfURL || "",
-        fgtsDocumentURL: fgtsURL || "",
+      const uploadData: any = {
+        cpfCnpj: user.cpfCnpj,
         uploadedAt: new Date(),
+        type: user.type,
       };
 
-      console.log(uploadData);
+      if (user.type === "buyer") {
+        if (irpfFile) {
+          const irpfRef = ref(
+            storage,
+            `files/${user?.cpf}/irpf_${timestamp}_${irpfFile?.name}`
+          );
+          const irpfSnapshot = await uploadBytes(irpfRef, irpfFile);
+          const irpfURL = await getDownloadURL(irpfSnapshot.ref);
+          uploadData.irpfDocumentURL = irpfURL;
+        }
+
+        if (fgtsFile) {
+          const fgtsRef = ref(
+            storage,
+            `files/${user?.cpf}/fgts_${timestamp}_${fgtsFile?.name}`
+          );
+          const fgtsSnapshot = await uploadBytes(fgtsRef, fgtsFile);
+          const fgtsURL = await getDownloadURL(fgtsSnapshot.ref);
+          uploadData.fgtsDocumentURL = fgtsURL;
+        }
+        if (profitFile) {
+          const compRendaRef = ref(
+            storage,
+            `files/${user?.cpf}/comp_renda_${timestamp}_${profitFile?.name}`
+          );
+          const compRendaSnapshot = await uploadBytes(compRendaRef, profitFile);
+          const compRendaURL = await getDownloadURL(compRendaSnapshot.ref);
+          uploadData.compRendaDocumentURL = compRendaURL;
+        }
+        if (ctpsFile) {
+          const ctpsRef = ref(
+            storage,
+            `files/${user?.cpf}/ctps_${timestamp}_${ctpsFile?.name}`
+          );
+          const ctpsSnapshot = await uploadBytes(ctpsRef, ctpsFile);
+          const ctpsURL = await getDownloadURL(ctpsSnapshot.ref);
+          uploadData.cartTrabalhoDocumentURL = ctpsURL;
+        }
+      } else if (user.type === "buyer" || user.type === "seller_pf") {
+        if (mariageFile) {
+          const certCasamentoRef = ref(
+            storage,
+            `files/${user?.cpf}/cert_casamento_${timestamp}_${mariageFile?.name}`
+          );
+          const certCasamentoSnapshot = await uploadBytes(
+            certCasamentoRef,
+            mariageFile
+          );
+          const certCasamentoURL = await getDownloadURL(
+            certCasamentoSnapshot.ref
+          );
+          uploadData.certCasamentoDocumentURL = certCasamentoURL;
+        }
+
+        if (enderecoFile) {
+          const enderecoRef = ref(
+            storage,
+            `files/${user?.cpfCnpj}/endereco_${timestamp}_${enderecoFile?.name}`
+          );
+          const enderecoSnapshot = await uploadBytes(enderecoRef, enderecoFile);
+          const enderecoURL = await getDownloadURL(enderecoSnapshot.ref);
+          uploadData.enderecoDocumentURL = enderecoURL;
+        }
+      } else if (user.type === "seller_pj") {
+        if (cnpjFile) {
+          const cnpjRef = ref(
+            storage,
+            `files/${user?.cpf}/cnpj_${timestamp}_${cnpjFile?.name}`
+          );
+          const cnpjSnapshot = await uploadBytes(cnpjRef, cnpjFile);
+          const cnpjURL = await getDownloadURL(cnpjSnapshot.ref);
+          uploadData.cnpjDocumentURL = cnpjURL;
+        }
+
+        if (socialContractFile) {
+          const contratoSocialRef = ref(
+            storage,
+            `files/${user?.cpf}/contrato_social_${timestamp}_${socialContractFile?.name}`
+          );
+          const contratoSocialSnapshot = await uploadBytes(
+            contratoSocialRef,
+            socialContractFile
+          );
+          const contratoSocialURL = await getDownloadURL(
+            contratoSocialSnapshot.ref
+          );
+          uploadData.contratoSocialDocumentURL = contratoSocialURL;
+        }
+      }
+
+      if (rgCnhFile) {
+        const rgCnhRef = ref(
+          storage,
+          `files/${user?.cpf}/rg_cnh_${timestamp}_${rgCnhFile?.name}`
+        );
+        const rgCnhSnapshot = await uploadBytes(rgCnhRef, rgCnhFile);
+        const rgCnhURL = await getDownloadURL(rgCnhSnapshot.ref);
+        uploadData.rgCnhDocumentURL = rgCnhURL;
+      }
+
+      if (cpfFile) {
+        const cpfRef = ref(
+          storage,
+          `files/${user?.cpfCnpj}/cpf_${timestamp}_${cpfFile?.name}`
+        );
+        const cpfSnapshot = await uploadBytes(cpfRef, cpfFile);
+        const cpfURL = await getDownloadURL(cpfSnapshot.ref);
+        uploadData.cpfDocumentURL = cpfURL;
+      }
+
       const uploadsCollection = collection(db, "uploads");
       await addDoc(uploadsCollection, uploadData);
 
-      setMessage("Arquivo carregado com sucesso!");
+      setMessage("Arquivos carregados com sucesso!");
       reset();
       setCpfFile(null);
       setRGCnhFile(null);
