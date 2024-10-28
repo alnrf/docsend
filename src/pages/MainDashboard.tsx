@@ -5,6 +5,10 @@ import { collection, getDocs, addDoc, query, where } from "firebase/firestore";
 import { useForm } from "react-hook-form";
 import { db, storage } from "../configs/firebase";
 import { useNavigate } from "react-router";
+import {
+  getDocumentName,
+  getUserType,
+} from "../shared/helpers/DocumentsHelpers";
 type FileUrls = {
   contratoSocialDocumentURL?: string;
   cpfDocumentURL?: string;
@@ -40,19 +44,16 @@ export const MainDashboard = () => {
           const data = doc.data();
           const { cpfCnpj, type, uploadedAt, ...fileUrls } = data;
 
-          // Convert timestamp to readable format if available
           if (uploadedAt && uploadedAt.seconds) {
             fileUrls.uploadedAt = new Date(
               uploadedAt.seconds * 1000
             ).toLocaleString();
           }
 
-          // Check if a group with the same type and cpfCnpj exists
           let documentGroup = groupedFiles.find(
             (group) => group.type === type && group.cpfCnpj === cpfCnpj
           );
 
-          // If the group doesn't exist, create it
           if (!documentGroup) {
             documentGroup = {
               type,
@@ -62,7 +63,6 @@ export const MainDashboard = () => {
             groupedFiles.push(documentGroup);
           }
 
-          // Add document URLs to the documents array in the group
           documentGroup.documents.push(fileUrls as FileUrls);
         });
 
@@ -102,7 +102,7 @@ export const MainDashboard = () => {
                 <strong>CPF/CNPJ:</strong> {fileGroup.cpfCnpj}
               </div>
               <div className="documentNumberRow">
-                <strong>Perfil:</strong> {fileGroup.type}
+                <strong>Perfil:</strong> {getUserType(fileGroup.type)}
               </div>
               <div>
                 {fileGroup.documents.map((document, docIndex) => (
@@ -112,9 +112,11 @@ export const MainDashboard = () => {
                         <a
                           href={url as string}
                           target="_blank"
-                          rel="noopener noreferrer"
+                          rel="noreferrer"
+                          download={getDocumentName(key)}
                         >
-                          {key}
+                          Getnet
+                          {getDocumentName(key)}
                         </a>
                       </div>
                     ))}
